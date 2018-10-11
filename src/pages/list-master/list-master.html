@@ -1,35 +1,63 @@
 <ion-header>
-
   <ion-navbar>
     <ion-title>{{ 'LIST_MASTER_TITLE' | translate }}</ion-title>
-
     <ion-buttons end>
-      <button ion-button icon-only (click)="addItem()">
+<!--       <button ion-button icon-only (click)="addItem()">
         <ion-icon name="add"></ion-icon>
-      </button>
+      </button> -->
     </ion-buttons>
   </ion-navbar>
-
 </ion-header>
-
 <ion-content>
+  <ion-card>
+    <ion-card-title>Search City</ion-card-title>
+    <ion-item>
+      <ion-label>Select Country</ion-label>
+      <ion-select [(ngModel)]="country" (ionChange)="onSelectChange($event)">
+        <ion-option value="{{country.name}}" *ngFor="let country of countries">{{country.name}}</ion-option>>
+      </ion-select>
+    </ion-item>
+  </ion-card>
+  <ion-card>
+    <ion-card-title>
+      City Details
+    </ion-card-title>
+    <span *ngIf="selectedCountry">
+      City: {{selectedCountry.name}} <br>
+      Alpha2 Code: {{selectedCountry.alpha2Code}} <br>
+      Alpha3 Code: {{selectedCountry.alpha3Code}} <br>
+      Capital: {{selectedCountry.capital}} <br>
+      Region: {{selectedCountry.region}} <br>
+      SubRegion: {{selectedCountry.subregion}} <br>
+      Population: {{selectedCountry.population}} <br>
+      Denonym: {{selectedCountry.demonym}} <br>
+      Area: {{selectedCountry.area}} <br>
+      Gini: {{selectedCountry.gini}} <br>
+      Native Name: {{selectedCountry.nativeName}} <br>
+      Numeric Code: {{selectedCountry.numericCode}} <br>
+      Flag: {{selectedCountry.flag}} <br>
+      CIOC: {{selectedCountry.cioc}} <br>
+    </span>
+  </ion-card>
+    <ion-card>
+    <ion-card-title>
+      Weather Detail
+    </ion-card-title>
+    <span *ngIf="weatherReport">
+      <span *ngIf="weatherReport.count == 0">
+        "No forecast data found"
+      </span>
+      <span *ngFor="let wet of weatherReport.list">
+        Temp: {{wet.main.temp}} <br>
+        Pressure: {{wet.main.pressure}} <br>
+        Humidity: {{wet.main.humidity}} <br>
+        Min Temp: {{wet.main.temp_min}} <br>
+        Max Temp: {{wet.main.temp_max}} <br>
+        Sea Level: {{wet.main.sea_level}} <br>
+        Ground Level: {{wet.main.grnd_level}} <br>
+         <br>
 
-  <ion-list>
-    <ion-item-sliding *ngFor="let item of currentItems">
-      <button ion-item (click)="openItem(item)">
-        <ion-avatar item-start>
-          <img [src]="item.profilePic" />
-        </ion-avatar>
-        <h2>{{item.name}}</h2>
-        <p>{{item.about}}</p>
-        <ion-note item-end *ngIf="item.note">{{item.note}}</ion-note>
-      </button>
-
-      <ion-item-options>
-        <button ion-button color="danger" (click)="deleteItem(item)">
-          {{ 'DELETE_BUTTON' | translate }}
-        </button>
-      </ion-item-options>
-    </ion-item-sliding>
-  </ion-list>
+      </span>
+    </span>
+  </ion-card>
 </ion-content>

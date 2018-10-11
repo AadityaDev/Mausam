@@ -1,8 +1,13 @@
 import { Component } from '@angular/core';
 import { IonicPage, ModalController, NavController } from 'ionic-angular';
 
+import { Country } from '../../models/country';
 import { Item } from '../../models/item';
-import { Items } from '../../providers';
+import { CountriesProvider, Items, OpenweathermapProvider } from '../../providers/';
+
+import { WeatherReportResponse } from '../../models/weather-report-response';
+
+import {Observable} from 'rxjs';
 
 @IonicPage()
 @Component({
@@ -10,10 +15,22 @@ import { Items } from '../../providers';
   templateUrl: 'list-master.html'
 })
 export class ListMasterPage {
+  
+  country:Country;
   currentItems: Item[];
+  weatherReport:any;
+  countries:Country[];
+  isLoaded:boolean = false;
+  selectedCountry;
 
-  constructor(public navCtrl: NavController, public items: Items, public modalCtrl: ModalController) {
+  constructor(public navCtrl: NavController, public items: Items, public modalCtrl: ModalController ,private countriesProvider:CountriesProvider,
+    private openweathermapProvider:OpenweathermapProvider) {
     this.currentItems = this.items.query();
+    countriesProvider.getCountries().subscribe(
+      response=>{
+        this.countries = response;
+      });
+
   }
 
   /**
@@ -51,4 +68,40 @@ export class ListMasterPage {
       item: item
     });
   }
+
+  // onChange($event,country:Country){
+  //  console.log($event.target.value);
+  //      this.openweathermapProvider.getWeatherForecastByCountryName(country.getName())
+  //   .subscribe(
+  //     response=>{
+  //       this.weatherReport = response;
+  //     });
+  // }
+
+  onChange(country:Country){
+    this.country = country;
+    console.log(country.getName());
+  }
+
+  onSelectChange(selectedValue: any) {
+    this.isLoaded = true;
+    this.selectedCountry = this.country;
+    for(let cou of this.countries){
+      if(cou.name==selectedValue){
+        this.selectedCountry = cou;
+        this.getWeather(this.selectedCountry.name);
+        break;
+      }
+    }
+  }
+
+  getWeather(countryName:string){
+    this.openweathermapProvider.getWeatherForecastByCountryNames(countryName)
+    .subscribe(
+      response=>{
+        console.log("weather forecast: "+JSON.stringify(response));
+        this.weatherReport = response;
+      });
+  }
+
 }
